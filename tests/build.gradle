@@ -1,0 +1,8 @@
+
+dependencies {
+    def spockVersion = "0.7-groovy-2.0"
+
+    testCompile project(':core')
+    testCompile "org.spockframework:spock-core:$spockVersion"
+
+}

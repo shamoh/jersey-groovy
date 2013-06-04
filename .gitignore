@@ -1,0 +1,11 @@
+#IntelliJ Idea noise
+.idea
+*.iws
+*.ipr
+*.iml
+*.releaseBackup
+
+#gradle noise
+.gradle/
+build/
+
