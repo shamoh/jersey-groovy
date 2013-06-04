@@ -1,4 +1,4 @@
-moduleName=jersey-extension-module
-moduleVersion=2.1-SNAPSHOT
-extensionClasses=StringExtension
-#staticExtensionClasses=
+moduleName=${name}
+moduleVersion=${version}
+extensionClasses=org.glassfish.jersey.groovy.internal.JerseyExtension
+staticExtensionClasses=org.glassfish.jersey.groovy.internal.JerseyStaticExtension
