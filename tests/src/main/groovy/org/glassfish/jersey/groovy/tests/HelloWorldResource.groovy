@@ -84,6 +84,13 @@ public class HelloWorldResource {
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public String postHello(String name) {
+        return "Hello $name!"
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_XML)
     public String postHelloXml(Message message) {
         return "Hello $message.greeting!"

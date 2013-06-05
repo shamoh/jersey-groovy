@@ -1,6 +1,7 @@
 package org.glassfish.jersey.groovy.internal
 
 import javax.ws.rs.GET
+import javax.ws.rs.POST
 import javax.ws.rs.client.ClientBuilder
 import javax.ws.rs.client.WebTarget
 import javax.ws.rs.core.MediaType
@@ -29,6 +30,10 @@ class JerseyStaticExtension {
 
     public static ResponseWrapper getAt(GET method, String target) {
         return new ResponseWrapper(method: ResponseWrapper.Method.GET, target: target)
+    }
+
+    public static ResponseWrapper getAt(POST method, String target) {
+        return new ResponseWrapper(method: ResponseWrapper.Method.POST, target: target)
     }
 
 }

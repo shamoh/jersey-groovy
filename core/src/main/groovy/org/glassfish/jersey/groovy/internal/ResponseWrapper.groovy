@@ -4,8 +4,10 @@ import groovy.json.JsonSlurper
 import groovy.util.slurpersupport.GPathResult
 
 import javax.ws.rs.client.ClientBuilder
+import javax.ws.rs.client.Entity
 import javax.ws.rs.client.Invocation
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 /**
  * @author Libor Kramolis (libor.kramolis at oracle.com)
@@ -14,14 +16,28 @@ class ResponseWrapper {
 
     Method method
     String target
-    private MediaType mediaType
+    private MediaType requestMediaType
+    private MediaType entityMediaType
+    private Response response
+    private Entity entity
 
     //
     // self init
     //
 
     def ResponseWrapper and(MediaType mediaType) {
-        this.mediaType = mediaType
+        this.requestMediaType = mediaType
+        return this
+    }
+
+    def ResponseWrapper or(MediaType mediaType) {
+        this.entityMediaType = mediaType
+        return this
+    }
+
+    def <T> ResponseWrapper leftShift(T data) {
+        this.entity = Entity.entity(data, entityMediaType == null ? MediaType.TEXT_PLAIN_TYPE : entityMediaType)
+
         return this
     }
 
@@ -30,16 +46,16 @@ class ResponseWrapper {
     //
 
     def String getText() {
-        mediaType = MediaType.TEXT_PLAIN_TYPE
-        Invocation.Builder builder = getWebTarget().request(mediaType)
         checkMethod(Method.GET)
+        requestMediaType = MediaType.TEXT_PLAIN_TYPE
+        Invocation.Builder builder = getWebTarget().request(requestMediaType)
         return builder.get(String.class)
     }
 
     def GPathResult getXml() {
-        mediaType = MediaType.APPLICATION_XML_TYPE
-        Invocation.Builder builder = getWebTarget().request(mediaType) //TODO moznost zadat jiny a presto XML typ
         checkMethod(Method.GET)
+        requestMediaType = MediaType.APPLICATION_XML_TYPE
+        Invocation.Builder builder = getWebTarget().request(requestMediaType) //TODO possibility to set another XML type
         InputStream inputStream = builder.get().readEntity(InputStream)
         try {
             return new XmlSlurper().parse(inputStream)
@@ -49,9 +65,9 @@ class ResponseWrapper {
     }
 
     def Object getJson() {
-        mediaType = MediaType.APPLICATION_JSON_TYPE
-        Invocation.Builder builder = getWebTarget().request(mediaType)
         checkMethod(Method.GET)
+        requestMediaType = MediaType.APPLICATION_JSON_TYPE
+        Invocation.Builder builder = getWebTarget().request(requestMediaType)
         Reader reader = builder.get().readEntity(Reader)
         try {
             return new JsonSlurper().parse(reader)
@@ -62,17 +78,25 @@ class ResponseWrapper {
 
 /*
     def <T> T rightShift(Class<T> type) {
-        mediaType = MediaType.APPLICATION_XML_TYPE
-        Invocation.Builder builder = getWebTarget().request(mediaType)
+        requestMediaType = MediaType.APPLICATION_XML_TYPE
+        Invocation.Builder builder = getWebTarget().request(requestMediaType)
         checkMethod(Method.GET)
         return builder.get(type)
     }
 */
 
     def <T> T asType(Class<T> type) {
-        Invocation.Builder builder = getWebTarget().request(mediaType)
-        checkMethod(Method.GET)
-        return builder.get(type)
+//        checkMethod(Method.GET)
+//        Invocation.Builder builder = getWebTarget().request(requestMediaType)
+
+        Invocation.Builder builder = requestMediaType != null ? getWebTarget().request(requestMediaType) : getWebTarget().request()
+
+        switch (method) {
+            case Method.GET:
+                return builder.get(type)
+            case Method.POST:
+                return builder.post(entity, type)
+        }
     }
 
     //

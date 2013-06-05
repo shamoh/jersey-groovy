@@ -6,6 +6,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.ws.rs.GET
+import javax.ws.rs.POST
 import javax.ws.rs.client.ClientBuilder
 import javax.ws.rs.client.Entity
 import javax.ws.rs.client.WebTarget
@@ -30,13 +31,6 @@ class DslSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
-    def "[XML/pure] GET hello Jersey"() {
-        expect:
-        def response = GET[RESOURCE_URL/"Jersey"].xml
-        response instanceof Message == false
-        response.greeting.text() == "Hello Jersey!"
-    }
-
     def "[XML/object] GET hello Jersey"() {
         expect:
         def response = (GET[RESOURCE_URL/"Jersey"] & MediaType.APPLICATION_XML_TYPE) as Message
@@ -44,11 +38,11 @@ class DslSpecTest extends Specification {
         response.greeting == "Hello Jersey!"
     }
 
-    def "[JSON/pure] GET hello Jersey"() {
+    def "[XML/slurper] GET hello Jersey"() {
         expect:
-        def response = GET[RESOURCE_URL/"Jersey"].json
+        def response = GET[RESOURCE_URL/"Jersey"].xml
         response instanceof Message == false
-        response.greeting == "Hello Jersey!"
+        response.greeting.text() == "Hello Jersey!"
     }
 
     def "[JSON/object] GET hello Jersey"() {
@@ -58,31 +52,46 @@ class DslSpecTest extends Specification {
         response.greeting == "Hello Jersey!"
     }
 
-    def "[XML/pure] POST hello Jersey"() {
+    def "[JSON/slurper] GET hello Jersey"() {
         expect:
-        WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_XML_TYPE)
-        def response = target.request().post(entity, String)
+        def response = GET[RESOURCE_URL/"Jersey"].json
+        response instanceof Message == false
+        response.greeting == "Hello Jersey!"
+    }
+
+    def "[TEXT] POST hello Jersey"() {
+        expect:
+        def response = POST[RESOURCE_URL] << "Jersey" as String
         response == "Hello Jersey!"
     }
 
     def "[XML/object] POST hello Jersey"() {
         expect:
+        def response = (POST[RESOURCE_URL] | MediaType.APPLICATION_XML_TYPE) \
+                << new Message(greeting: "Jersey", timestamp: new Date()) \
+                as String
+        response == "Hello Jersey!"
+    }
+
+    @Ignore("Not Yet Implemented")
+    def "[XML/slurper] POST hello Jersey"() {
+        expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_XML_TYPE)
         def response = target.request().post(entity, String)
         response == "Hello Jersey!"
     }
 
-    def "[JSON/pure] POST hello Jersey"() {
+    def "[JSON/object] POST hello Jersey"() {
         expect:
-        WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_JSON_TYPE)
-        def response = target.request().post(entity, String)
+        def response = (POST[RESOURCE_URL] | MediaType.APPLICATION_JSON_TYPE) \
+                << new Message(greeting: "Jersey", timestamp: new Date()) \
+                as String
         response == "Hello Jersey!"
     }
 
-    def "[JSON/object] POST hello Jersey"() {
+    @Ignore("Not Yet Implemented")
+    def "[JSON/slurper] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_JSON_TYPE)

@@ -50,6 +50,14 @@ class CommonSpecTest extends Specification {
         response.greeting == "Hello Jersey!"
     }
 
+    def "[TEXT] POST hello Jersey"() {
+        expect:
+        WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
+        def Entity entity = Entity.entity("Jersey", MediaType.TEXT_PLAIN);
+        def response = target.request().post(entity, String)
+        response == "Hello Jersey!"
+    }
+
     def "[XML] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
