@@ -39,10 +39,10 @@ class DslSpecTest extends Specification {
 
     def "[XML/Object] GET hello Jersey"() {
         expect:
-        def response = GET[RESOURCE_URL/"Jersey"] as Message// via MediaType.APPLICATION_XML
+//        def response = GET[RESOURCE_URL/"Jersey"] & MediaType.APPLICATION_XML_TYPE as Message
+        def response = (GET[RESOURCE_URL/"Jersey"] & MediaType.APPLICATION_XML_TYPE) as Message
         response instanceof Message
         response.greeting == "Hello Jersey!"
-//        def response = target.path("Jersey").request(MediaType.APPLICATION_XML).get(Message)
     }
 
     def "[JSON] GET hello Jersey"() {

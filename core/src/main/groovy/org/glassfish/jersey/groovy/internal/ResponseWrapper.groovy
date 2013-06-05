@@ -13,18 +13,32 @@ class ResponseWrapper {
 
     Method method
     String target
+    private MediaType mediaType
+
+    //
+    // self init
+    //
+
+    def ResponseWrapper and(MediaType mediaType) {
+        this.mediaType = mediaType
+        return this
+    }
+
+    //
+    // final
+    //
 
     def String getText() {
-        Invocation.Builder builder = getWebTarget().request(MediaType.TEXT_PLAIN)
-        if (method == Method.GET) {
-            builder.get(String.class)
-        } else {
-            throw new IllegalStateException("Wrong REST method ($method) to get text!")
-        }
+        mediaType = MediaType.TEXT_PLAIN_TYPE
+        Invocation.Builder builder = getWebTarget().request(mediaType)
+        checkMethod(Method.GET)
+        return builder.get(String.class)
     }
 
     def GPathResult getXml() {
-        Invocation.Builder builder = getWebTarget().request(MediaType.APPLICATION_XML) //TODO moznost zadat jiny a presto XML typ
+        mediaType = MediaType.APPLICATION_XML_TYPE
+        Invocation.Builder builder = getWebTarget().request(mediaType) //TODO moznost zadat jiny a presto XML typ
+        checkMethod(Method.GET)
         InputStream inputStream = builder.get().readEntity(InputStream)
         try {
             return new XmlSlurper().parse(inputStream)
@@ -33,12 +47,25 @@ class ResponseWrapper {
         }
     }
 
+    def <T> T asType(Class<T> type) {
+        mediaType = MediaType.APPLICATION_XML_TYPE
+        Invocation.Builder builder = getWebTarget().request(mediaType)
+        checkMethod(Method.GET)
+        return builder.get(type)
+    }
+
     //
     // utils
     //
 
     private def getWebTarget() {
         return ClientBuilder.newClient().target(target)
+    }
+
+    private def checkMethod(Method expectedMethod) {
+        if (method != expectedMethod) {
+            throw new IllegalStateException("Wrong REST method ($method) to process request!")
+        }
     }
 
     //
