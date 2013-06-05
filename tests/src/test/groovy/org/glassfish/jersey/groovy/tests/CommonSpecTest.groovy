@@ -23,58 +23,47 @@ class CommonSpecTest extends Specification {
     def "[TEXT] GET hello world"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def response = target.request(MediaType.TEXT_PLAIN).get(String.class)
-        "Hello World!" == response
+        def response = target.request(MediaType.TEXT_PLAIN).get(String)
+        response == "Hello World!"
     }
 
     def "[TEXT] GET hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def response = target.path("Jersey").request(MediaType.TEXT_PLAIN).get(String.class)
-        "Hello Jersey!" == response
+        def response = target.path("Jersey").request(MediaType.TEXT_PLAIN).get(String)
+        response == "Hello Jersey!"
     }
 
     def "[XML] GET hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def response = target.path("Jersey").request(MediaType.APPLICATION_XML).get(Message.class)
-        "Hello Jersey!" == response.greeting
+        def response = target.path("Jersey").request(MediaType.APPLICATION_XML).get(Message)
+        response instanceof Message
+        response.greeting == "Hello Jersey!"
     }
 
     def "[JSON] GET hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def response = target.path("Jersey").request(MediaType.APPLICATION_JSON).get(Message.class)
-        "Hello Jersey!" == response.greeting
+        def response = target.path("Jersey").request(MediaType.APPLICATION_JSON).get(Message)
+        response instanceof Message
+        response.greeting == "Hello Jersey!"
     }
 
     def "[XML] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_XML_TYPE)
-        def response = target.request().post(entity, String.class)
-        "Hello Jersey!" == response
+        def response = target.request().post(entity, String)
+        response == "Hello Jersey!"
     }
 
     def "[JSON] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_JSON_TYPE)
-        def response = target.request().post(entity, String.class)
-        "Hello Jersey!" == response
-    }
-
-    @Ignore
-    def "GET"() {
-        expect:
-        WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def response = target.path("Jersey").request(MediaType.APPLICATION_XML_TYPE).get(Message.class)
-        "Hello Jersey!" == response
-
-//        def response = GET.text "http://localhost:8080/base/helloworld"
-
-//        def response = GET.response "http://localhost:8080/base"
-//        response instanceof Response
+        def response = target.request().post(entity, String)
+        response == "Hello Jersey!"
     }
 
     //
