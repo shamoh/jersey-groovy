@@ -1,5 +1,6 @@
 package org.glassfish.jersey.groovy.internal
 
+import groovy.json.JsonSlurper
 import groovy.util.slurpersupport.GPathResult
 
 import javax.ws.rs.client.ClientBuilder
@@ -47,8 +48,28 @@ class ResponseWrapper {
         }
     }
 
-    def <T> T asType(Class<T> type) {
+    def Object getJson() {
+        mediaType = MediaType.APPLICATION_JSON_TYPE
+        Invocation.Builder builder = getWebTarget().request(mediaType)
+        checkMethod(Method.GET)
+        Reader reader = builder.get().readEntity(Reader)
+        try {
+            return new JsonSlurper().parse(reader)
+        } finally {
+            reader.close()
+        }
+    }
+
+/*
+    def <T> T rightShift(Class<T> type) {
         mediaType = MediaType.APPLICATION_XML_TYPE
+        Invocation.Builder builder = getWebTarget().request(mediaType)
+        checkMethod(Method.GET)
+        return builder.get(type)
+    }
+*/
+
+    def <T> T asType(Class<T> type) {
         Invocation.Builder builder = getWebTarget().request(mediaType)
         checkMethod(Method.GET)
         return builder.get(type)

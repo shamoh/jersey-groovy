@@ -30,30 +30,35 @@ class DslSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
-    def "[XML] GET hello Jersey"() {
+    def "[XML/pure] GET hello Jersey"() {
         expect:
         def response = GET[RESOURCE_URL/"Jersey"].xml
         response instanceof Message == false
         response.greeting.text() == "Hello Jersey!"
     }
 
-    def "[XML/Object] GET hello Jersey"() {
+    def "[XML/object] GET hello Jersey"() {
         expect:
-//        def response = GET[RESOURCE_URL/"Jersey"] & MediaType.APPLICATION_XML_TYPE as Message
         def response = (GET[RESOURCE_URL/"Jersey"] & MediaType.APPLICATION_XML_TYPE) as Message
         response instanceof Message
         response.greeting == "Hello Jersey!"
     }
 
-    def "[JSON] GET hello Jersey"() {
+    def "[JSON/pure] GET hello Jersey"() {
         expect:
-        WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def response = target.path("Jersey").request(MediaType.APPLICATION_JSON).get(Message)
+        def response = GET[RESOURCE_URL/"Jersey"].json
+        response instanceof Message == false
+        response.greeting == "Hello Jersey!"
+    }
+
+    def "[JSON/object] GET hello Jersey"() {
+        expect:
+        def response = (GET[RESOURCE_URL/"Jersey"] & MediaType.APPLICATION_JSON_TYPE) as Message
         response instanceof Message
         response.greeting == "Hello Jersey!"
     }
 
-    def "[XML] POST hello Jersey"() {
+    def "[XML/pure] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_XML_TYPE)
@@ -61,7 +66,15 @@ class DslSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
-    def "[JSON] POST hello Jersey"() {
+    def "[XML/object] POST hello Jersey"() {
+        expect:
+        WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
+        def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_XML_TYPE)
+        def response = target.request().post(entity, String)
+        response == "Hello Jersey!"
+    }
+
+    def "[JSON/pure] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_JSON_TYPE)
@@ -69,17 +82,12 @@ class DslSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
-    @Ignore
-    def "GET"() {
+    def "[JSON/object] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def response = target.path("Jersey").request(MediaType.APPLICATION_XML_TYPE).get(Message)
+        def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_JSON_TYPE)
+        def response = target.request().post(entity, String)
         response == "Hello Jersey!"
-
-//        def response = GET.text "http://localhost:8080/base/helloworld"
-
-//        def response = GET.response "http://localhost:8080/base"
-//        response instanceof Response
     }
 
     //
