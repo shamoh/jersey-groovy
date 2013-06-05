@@ -59,7 +59,7 @@ public class HelloWorldTest {
     public void testHelloWorld() throws Exception {
         HttpServer server = App.startServer();
 
-        WebTarget target = ClientBuilder.newClient().target(App.BASE_URI.toString() + App.RESOURCE_PATH);
+        WebTarget target = ClientBuilder.newClient().target(App.BASE_URL + App.RESOURCE_PATH);
         assertEquals(HelloWorldResource.CLICHED_MESSAGE, target.request(MediaType.TEXT_PLAIN).get(String.class));
 
         server.stop();

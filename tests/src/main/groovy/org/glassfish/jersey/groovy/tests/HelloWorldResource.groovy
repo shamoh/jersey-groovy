@@ -37,25 +37,63 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.glassfish.jersey.groovy.tests;
+package org.glassfish.jersey.groovy.tests
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.Consumes
+import javax.ws.rs.GET
+import javax.ws.rs.POST
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
+import javax.ws.rs.core.MediaType
 
 /**
  *
  * @author Jakub Podlesak (jakub.podlesak at oracle.com)
  */
-@Path("helloworld")
+@Path("/helloworld")
 public class HelloWorldResource {
-    public static final String CLICHED_MESSAGE = "Hello World!";
+    public static final String CLICHED_MESSAGE = "Hello World!"
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getHello() {
-        return CLICHED_MESSAGE;
+        return CLICHED_MESSAGE
+    }
+
+    @Path("/{name}")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getHello(@PathParam("name") String name) {
+        return "Hello $name!"
+    }
+
+    @Path("/{name}")
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public Message getHelloXml(@PathParam("name") String name) {
+        return new Message(greeting: "Hello $name!", timestamp: new Date())
+    }
+
+    @Path("/{name}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Message getHelloJson(@PathParam("name") String name) {
+        return new Message(greeting: "Hello $name!", timestamp: new Date())
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_XML)
+    public String postHelloXml(Message message) {
+        return "Hello $message.greeting!"
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String postHelloJson(Message message) {
+        return "Hello $message.greeting!"
     }
 
 }

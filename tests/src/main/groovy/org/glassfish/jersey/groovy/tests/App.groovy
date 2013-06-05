@@ -40,9 +40,8 @@
 package org.glassfish.jersey.groovy.tests
 
 import org.glassfish.jersey.filter.LoggingFilter
+import org.glassfish.jersey.moxy.json.MoxyJsonFeature
 import org.glassfish.jersey.server.ResourceConfig
-
-import javax.ws.rs.core.Application;
 
 import java.util.logging.Level
 import java.util.logging.Logger;
@@ -57,17 +56,18 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
  */
 public class App {
 
-    public static final URI BASE_URI = URI.create("http://localhost:8080/base/");
+    public static final String BASE_URL = "http://localhost:8080/base/";
     public static final String RESOURCE_PATH = "helloworld";
 
     public static HttpServer startServer() {
-        final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, create());
+        final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URL), create());
         return server;
     }
 
     private static ResourceConfig create() {
         return new ResourceConfig()
                 .registerClasses(HelloWorldResource.class)
+                .register(MoxyJsonFeature.class)
                 .registerInstances(new LoggingFilter(Logger.getLogger(App.class.getName()), true));
     }
 
@@ -78,7 +78,7 @@ public class App {
             System.out.println(String.format("Application started.\n" +
                     "To test long-running asynchronous operation resource, try %s%s\n" +
                     "To test async chat resource, try %s%s\n" +
-                    "Hit enter to stop it...", BASE_URI, RESOURCE_PATH, BASE_URI, "chat"));
+                    "Hit enter to stop it...", BASE_URL, RESOURCE_PATH, BASE_URL, RESOURCE_PATH));
 
             System.in.read();
 
