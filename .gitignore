@@ -4,6 +4,7 @@
 *.ipr
 *.iml
 *.releaseBackup
+out/
 
 #gradle noise
 .gradle/
