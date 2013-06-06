@@ -41,6 +41,24 @@ class ResponseWrapper {
         return this
     }
 
+    def ResponseWrapper leftShift(Closure closure){
+        println ">> $closure"
+
+        return this
+    }
+/*
+    private static xmlContent(Closure clos){
+        def writer = new StringWriter()
+        def xml = new MarkupBuilder(writer)
+        if(xmlDeclaration){
+            xml.mkp.xmlDeclaration(version:'1.0',encoding:'UTF-8')
+        }
+        clos.delegate=xml
+        clos.call()
+        writer.toString()
+    }
+*/
+
     //
     // final
     //

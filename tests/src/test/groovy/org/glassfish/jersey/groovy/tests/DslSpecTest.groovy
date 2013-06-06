@@ -1,15 +1,13 @@
 package org.glassfish.jersey.groovy.tests
 
 import org.glassfish.grizzly.http.server.HttpServer
+
 import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.ws.rs.GET
 import javax.ws.rs.POST
-import javax.ws.rs.client.ClientBuilder
-import javax.ws.rs.client.Entity
-import javax.ws.rs.client.WebTarget
 import javax.ws.rs.core.MediaType
 
 /**
@@ -73,15 +71,6 @@ class DslSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
-    @Ignore("Not Yet Implemented")
-    def "[XML/slurper] POST hello Jersey"() {
-        expect:
-        WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_XML_TYPE)
-        def response = target.request().post(entity, String)
-        response == "Hello Jersey!"
-    }
-
     def "[JSON/object] POST hello Jersey"() {
         expect:
         def response = (POST[RESOURCE_URL] | MediaType.APPLICATION_JSON_TYPE) \
@@ -90,12 +79,33 @@ class DslSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
+    //
+    // ignore
+    //
+
+    @Ignore("Not Yet Implemented")
+    def "[XML/slurper] POST hello Jersey"() {
+        expect:
+        def response = (POST[RESOURCE_URL] | MediaType.APPLICATION_XML_TYPE) \
+                << { xml: message() {
+            greeting("Jersey")
+            timestamp(new Date())
+        }
+        } \
+                as String
+        response == "Hello Jersey!"
+    }
+
     @Ignore("Not Yet Implemented")
     def "[JSON/slurper] POST hello Jersey"() {
         expect:
-        WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
-        def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_JSON_TYPE)
-        def response = target.request().post(entity, String)
+        def response = (POST[RESOURCE_URL] | MediaType.APPLICATION_JSON_TYPE) \
+                << { json.message() {
+                       greeting("Jersey")
+                       timestamp(new Date())
+                     }
+                   } \
+                as String
         response == "Hello Jersey!"
     }
 

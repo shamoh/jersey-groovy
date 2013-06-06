@@ -14,6 +14,7 @@ import javax.ws.rs.client.WebTarget
 import javax.ws.rs.core.MediaType
 
 /**
+ * @author Libor Kramolis (libor.kramolis at oracle.com)
  * @todo form data
  */
 class CommonSpecTest extends Specification {
@@ -34,7 +35,7 @@ class CommonSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
-    def "[XML] GET hello Jersey"() {
+    def "[XML/object] GET hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def response = target.path("Jersey").request(MediaType.APPLICATION_XML).get(Message)
@@ -42,7 +43,7 @@ class CommonSpecTest extends Specification {
         response.greeting == "Hello Jersey!"
     }
 
-    def "[JSON] GET hello Jersey"() {
+    def "[JSON/object] GET hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def response = target.path("Jersey").request(MediaType.APPLICATION_JSON).get(Message)
@@ -58,7 +59,7 @@ class CommonSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
-    def "[XML] POST hello Jersey"() {
+    def "[XML/object] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_XML_TYPE)
@@ -66,7 +67,7 @@ class CommonSpecTest extends Specification {
         response == "Hello Jersey!"
     }
 
-    def "[JSON] POST hello Jersey"() {
+    def "[JSON/object] POST hello Jersey"() {
         expect:
         WebTarget target = ClientBuilder.newClient().target(RESOURCE_URL)
         def Entity entity = Entity.entity(new Message(greeting: "Jersey", timestamp: new Date()), MediaType.APPLICATION_JSON_TYPE)

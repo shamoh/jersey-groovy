@@ -48,8 +48,7 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 
 /**
- *
- * @author Jakub Podlesak (jakub.podlesak at oracle.com)
+ * @author Libor Kramolis (libor.kramolis at oracle.com)
  */
 @Path("/helloworld")
 public class HelloWorldResource {
