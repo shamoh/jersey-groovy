@@ -48,20 +48,109 @@ URL: https://code.google.com/p/io-2012-slides
 
   <slide>
       <hgroup>
-          <h2>GET hello world</h2>
-          <h3>Get plain text, no parameters</h3>
+          <h2>Get Hello World</h2>
+          <h3>GET plain text, no parameters</h3>
       </hgroup>
       <article>
         <ul><li><p>JAX-RS Client API:</p></li></ul>
 <pre class="prettyprint" data-lang="groovy">
 WebTarget target = <b>ClientBuilder.newClient().target(RESOURCE_URL)</b>
-def response = <b>target.request(MediaType.TEXT_PLAIN).get(String)</b>
+def response = <b>target.request(TEXT_PLAIN_TYPE).get(String)</b>
 response == "Hello World!"
 </pre>
         <ul><li><p>Jersey Groovy DSL:</p></li></ul>
 <pre class="prettyprint" data-lang="groovy">
 def response = <b>GET[RESOURCE_URL].text</b>
 response == "Hello World!"
+</pre>
+          <p>(Press 'h' to highlight important sections of code.)</p>
+      </article>
+  </slide>
+
+  <slide>
+      <hgroup>
+          <h2>Get Hello Jersey</h2>
+          <h3>GET plain text, path parameter</h3>
+      </hgroup>
+      <article>
+        <ul><li><p>JAX-RS Client API:</p></li></ul>
+<pre class="prettyprint" data-lang="groovy">
+WebTarget target = <b>ClientBuilder.newClient().target(RESOURCE_URL)</b>
+def response = <b>target.path("Jersey").request(TEXT_PLAIN_TYPE).get(String)</b>
+response == "Hello Jersey!"
+</pre>
+        <ul><li><p>Jersey Groovy DSL:</p></li></ul>
+<pre class="prettyprint" data-lang="groovy">
+def response = <b>GET[RESOURCE_URL/"Jersey"].text</b>
+response == "Hello Jersey!"
+</pre>
+          <p>(Press 'h' to highlight important sections of code.)</p>
+      </article>
+  </slide>
+
+  <slide>
+      <hgroup>
+          <h2>Get Hello Jersey</h2>
+          <h3>GET XML, path parameter</h3>
+      </hgroup>
+      <article>
+        <ul><li><p>JAX-RS Client API:</p></li></ul>
+<pre class="prettyprint" data-lang="groovy">
+WebTarget target = <b>ClientBuilder.newClient().target(RESOURCE_URL)</b>
+def response = <b>target.path("Jersey").request(APPLICATION_XML_TYPE).get(Message)</b>
+response instanceof Message
+response.greeting == "Hello Jersey!"
+</pre>
+        <ul><li><p>Jersey Groovy DSL:</p></li></ul>
+<pre class="prettyprint" data-lang="groovy">
+def response = <b>(GET[RESOURCE_URL/"Jersey"] &amp; APPLICATION_XML_TYPE) as Message</b>
+response instanceof Message
+response.greeting == "Hello Jersey!"
+</pre>
+          <p>(Press 'h' to highlight important sections of code.)</p>
+      </article>
+  </slide>
+
+  <slide>
+      <hgroup>
+          <h2>Post Hello Jersey</h2>
+          <h3>POST plain text, response text</h3>
+      </hgroup>
+      <article>
+        <ul><li><p>JAX-RS Client API:</p></li></ul>
+<pre class="prettyprint" data-lang="groovy">
+WebTarget target = <b>ClientBuilder.newClient().target(RESOURCE_URL)</b>
+def Entity entity = <b>Entity.entity("Jersey", TEXT_PLAIN_TYPE);</b>
+def response = <b>target.request().post(entity, String)</b>
+response == "Hello Jersey!"
+</pre>
+        <ul><li><p>Jersey Groovy DSL:</p></li></ul>
+<pre class="prettyprint" data-lang="groovy">
+def response = <b>POST[RESOURCE_URL] &lt;&lt; "Jersey" as String</b>
+response == "Hello Jersey!"
+</pre>
+          <p>(Press 'h' to highlight important sections of code.)</p>
+      </article>
+  </slide>
+
+  <slide>
+      <hgroup>
+          <h2>Post Hello Jersey</h2>
+          <h3>POST object as JSON, response text</h3>
+      </hgroup>
+      <article>
+        <ul><li><p>JAX-RS Client API:</p></li></ul>
+<pre class="prettyprint" data-lang="groovy">
+WebTarget target = <b>ClientBuilder.newClient().target(RESOURCE_URL)</b>
+def Entity entity = <b>Entity.entity(new Message("Jersey", new Date()), APPLICATION_JSON_TYPE)</b>
+def response = <b>target.request().post(entity, String)</b>
+response == "Hello Jersey!"
+</pre>
+        <ul><li><p>Jersey Groovy DSL:</p></li></ul>
+<pre class="prettyprint" data-lang="groovy">
+def response = <b>(POST[RESOURCE_URL] | APPLICATION_JSON_TYPE) \</b>
+                   <b>&lt;&lt; new Message("Jersey", new Date()) as String</b>
+response == "Hello Jersey!"
 </pre>
           <p>(Press 'h' to highlight important sections of code.)</p>
       </article>
